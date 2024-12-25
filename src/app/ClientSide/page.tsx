@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import { Product } from "@/types/types";
+import Image from "next/image";
 
 const ClientSide: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,8 +20,12 @@ const ClientSide: React.FC = () => {
         const data: Product[] = await res.json();
         setProducts(data);
         setLoading(false);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
         setLoading(false);
       }
     };
@@ -29,19 +34,11 @@ const ClientSide: React.FC = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-lg font-semibold text-gray-600">Loading...</p>
-      </div>
-    );
+    return <div className="container mx-auto p-4">Loading...</div>;
   }
 
   if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-lg font-semibold text-red-600">{error}</p>
-      </div>
-    );
+    return <div className="container mx-auto p-4 text-red-500">{error}</div>;
   }
 
   return (
@@ -57,11 +54,14 @@ const ClientSide: React.FC = () => {
               key={product.id}
               className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center border hover:shadow-lg transition duration-300"
             >
-              <img
+              <Image
                 src={product.image}
                 alt={product.title}
-                className="w-full h-40 object-contain mb-4"
+                width={200} // Set appropriate width
+                height={160} // Set appropriate height
+                className="object-contain mb-4"
               />
+
               <h3 className="font-semibold text-lg mb-2 text-center text-blue-950">
                 {product.title}
               </h3>
