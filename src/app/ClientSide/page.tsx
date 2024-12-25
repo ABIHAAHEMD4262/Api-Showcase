@@ -15,18 +15,13 @@ const ClientSide: React.FC = () => {
       try {
         const res = await fetch("https://fakestoreapi.com/products");
         if (!res.ok) {
-          throw new Error("Failed to fetch data");
+          throw new Error(`Failed to fetch data: ${res.statusText}`);
         }
         const data: Product[] = await res.json();
         setProducts(data);
         setLoading(false);
-      } catch (err: unknown) {
-        console.error("Error fetching products:", err);
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
+      } catch (err) {
+        setError("Failed to fetch products.");
         setLoading(false);
       }
     };
