@@ -14,20 +14,23 @@ const ClientSide: React.FC = () => {
     const fetchProducts = async () => {
       try {
         const res = await fetch("https://fakestoreapi.com/products");
+        console.log("Status:", res.status); // Debugging response status
         if (!res.ok) {
           throw new Error(`Failed to fetch data: ${res.statusText}`);
         }
         const data: Product[] = await res.json();
         setProducts(data);
-        setLoading(false);
       } catch (err) {
+        console.error("Error fetching products:", err);
         setError("Failed to fetch products.");
+      } finally {
         setLoading(false);
       }
     };
-
+  
     fetchProducts();
   }, []);
+  
 
   if (loading) {
     return (
@@ -55,12 +58,16 @@ const ClientSide: React.FC = () => {
               className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center border hover:shadow-lg transition duration-300"
             >
               <div className="relative w-full h-40">
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  layout="fill"
-                  objectFit="contain"
-                />
+              <Image
+  src={product.image}
+  alt={product.title}
+  layout="fill"
+  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+  priority
+  style={{ objectFit: 'contain' }}
+/>
+
+
               </div>
               <h3 className="font-semibold text-lg mb-2 text-center text-blue-950">
                 {product.title}
